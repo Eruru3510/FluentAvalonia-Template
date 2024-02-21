@@ -5,8 +5,7 @@
 	xmlns:local="using:AvaloniaNav"
 	xmlns:sty="using:FluentAvalonia.Styling"
 	RequestedThemeVariant="Dark">
-	<!--  "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options.  -->
-
+	
 	<Application.DataTemplates>
 		<local:ViewLocator />
 	</Application.DataTemplates>
@@ -25,7 +24,7 @@
 	</Application.Resources>
 
 	<Application.Styles>
-		<sty:FluentAvaloniaTheme PreferSystemTheme="True" PreferUserAccentColor="True" />
+		<sty:FluentAvaloniaTheme PreferSystemTheme="False" PreferUserAccentColor="True" />
 		<StyleInclude Source="/Styles/CustomTheme.axaml" />
 	</Application.Styles>
 </Application>

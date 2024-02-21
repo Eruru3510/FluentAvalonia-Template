@@ -6,10 +6,13 @@
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	xmlns:ui="using:FluentAvalonia.UI.Controls"
 	xmlns:vm="using:AvaloniaNav.ViewModels"
-	mc:Ignorable="d" d:DesignWidth="1280" d:DesignHeight="720">
+	d:DesignHeight="720"
+	d:DesignWidth="1280"
+	mc:Ignorable="d">
 	<Grid RowDefinitions="Auto,*">
 		<Grid
 			Name="TitleBarHost"
+			Grid.Row="0"
 			Background="Transparent"
 			ColumnDefinitions="Auto,Auto,*,Auto">
 			<Image
@@ -40,35 +43,26 @@
 					</OnPlatform>
 				</TextBlock.IsVisible>
 			</TextBlock>
-
-			<Border Grid.Column="2" Padding="6">
-				<!--<AutoCompleteBox Name="SearchBox"
-                                 MaxWidth="500"
-                                 Watermark="Search"
-                                 Classes="SampleApp"
-                                 ValueMemberBinding="{Binding Header, DataType=vm:MainAppSearchItem}"
-                                 ItemsSource="{Binding SearchTerms}">
-					
-					<AutoCompleteBox.ItemTemplate>
-						<DataTemplate x:DataType="vm:MainAppSearchItem">
-							<Panel>
-								<StackPanel HorizontalAlignment="Left"
-                                            VerticalAlignment="Center">
-									<TextBlock Text="{Binding Header}" />
-									<TextBlock Text="{Binding Namespace}"
-                                               Theme="{StaticResource CaptionTextBlockStyle}"
-                                               Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}"
-                                               FontStyle="Italic"/>
-								</StackPanel>
-							</Panel>
-						</DataTemplate>
-					</AutoCompleteBox.ItemTemplate>
-				</AutoCompleteBox>-->
-			</Border>
+			<ui:CommandBar Grid.Column="2">
+				<ui:CommandBar.PrimaryCommands>
+					<ui:CommandBarButton IconSource="Save" Label="Save" />
+					<ui:CommandBarButton IconSource="Undo" Label="Undo" />
+					<ui:CommandBarSeparator />
+					<ui:CommandBarToggleButton IconSource="Bold" Label="Bold" />
+					<ui:CommandBarToggleButton IconSource="Italic" Label="Italic" />
+					<ui:CommandBarToggleButton IconSource="Underline" Label="Underline" />
+				</ui:CommandBar.PrimaryCommands>
+				<ui:CommandBar.SecondaryCommands>
+					<ui:CommandBarButton IconSource="Cut" Label="Cut" />
+					<ui:CommandBarButton IconSource="Copy" Label="Copy" />
+					<ui:CommandBarButton IconSource="Paste" Label="Paste" />
+				</ui:CommandBar.SecondaryCommands>
+			</ui:CommandBar>
 		</Grid>
 
 		<ui:NavigationView
 			Name="NavView"
+			Grid.Row="1"
 			Grid.RowSpan="2"
 			AlwaysShowHeader="False"
 			IsBackEnabled="{Binding #FrameView.CanGoBack}"
@@ -77,8 +71,7 @@
 			<ui:Frame Name="FrameView" />
 		</ui:NavigationView>
 
-		<Panel Name="OverlayHost"
-               Grid.Row="1">
+		<Panel Name="OverlayHost" Grid.Row="1">
 			<!--<local:ControlDefinitionOverlay Name="CtrlDefOverlay" />-->
 		</Panel>
 	</Grid>

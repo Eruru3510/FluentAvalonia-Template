@@ -1,18 +1,21 @@
-using System;
-using System.Collections.Generic;
 
 using Avalonia;
 using Avalonia.Controls;
+
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Threading;
 
+using AvaloniaNav.Services.UnitViewModels;
 using AvaloniaNav.ViewModels;
 
-using FluentAvalonia.Core;
 using FluentAvalonia.UI.Controls;
 using FluentAvalonia.UI.Navigation;
 using FluentAvalonia.UI.Windowing;
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace AvaloniaNav;
 
@@ -23,14 +26,12 @@ public partial class MainView : UserControl
         InitializeComponent();
     }
 
-    protected override void OnLoaded(RoutedEventArgs e)
+    private void OnFrameViewNavigated(object sender,NavigationEventArgs e)
     {
-        base.OnLoaded(e);
+        var page = e.Content as Control;
+        var dataContext = page?.DataContext;
 
-        if (VisualRoot is AppWindow aw)
-        {
-            TitleBarHost.ColumnDefinitions[3].Width = new GridLength(aw.TitleBar.RightInset,GridUnitType.Pixel);
-        }
+
     }
 
     protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
@@ -53,47 +54,14 @@ public partial class MainView : UserControl
         FrameView.Navigated += OnFrameViewNavigated;
     }
 
-    public void InitializeNavigationPages()
+    protected override void OnLoaded(RoutedEventArgs e)
     {
+        base.OnLoaded(e);
 
-        try
+        if (VisualRoot is AppWindow aw)
         {
-            var mainPages = new MainPageViewModelBase[]
-            {
-                new HomeControlViewModel
-                {
-                    NavHeader = "Home",
-                    IconKey = "HomeIcon",
-                }
-            };
-
-            var menuItems = new List<NavigationViewItemBase>(1);
-
-            Dispatcher.UIThread.Post(() =>
-            {
-                for (int i = 0; i < mainPages.Length; i++)
-                {
-                    var pg = mainPages[i];
-                    var nvi = new NavigationViewItem
-                    {
-                        Content = pg.NavHeader,
-                        Tag = pg,
-                        IconSource = this.FindResource(pg.IconKey) as IconSource
-                    };
-
-                    menuItems.Add(nvi);
-
-                }
-                NavView.MenuItemsSource = menuItems;
-                FrameView.NavigateFromObject((NavView.MenuItemsSource.ElementAt(0) as Control).Tag);
-
-            });
-
-
-        }
-        catch (Exception ex)
-        {
-            DialogHostAvalonia.DialogHost.Show(ex.Message);
+            TitleBarHost.Height = 50;
+            TitleBarHost.ColumnDefinitions[3].Width = new GridLength(aw.TitleBar.RightInset,GridUnitType.Pixel);
         }
     }
 
@@ -102,11 +70,51 @@ public partial class MainView : UserControl
         base.OnPointerReleased(e);
     }
 
-    private void OnFrameViewNavigated(object sender,NavigationEventArgs e)
+    public IEnumerable<MainPageViewModelBase> InitializeFrameViewModel()
     {
-        var page = e.Content as Control;
-        var dataContext = page?.DataContext;
+        return new[]
+        {
+            new HomeControlViewModel { NavHeader = "Home", IconKey = "HomeIcon" },
+        };
+    }
 
+    public void InitializeNavigationPages()
+    {
 
+        try
+        {
+            var mainPages = new[]
+            {
+                new HomeControlViewModel
+                {
+                    NavHeader = "Home",
+                    IconKey = "HomeIcon",
+                }
+            };
+
+            Dispatcher.UIThread.Post(() =>
+            {
+                var menuItems = mainPages.Select(pg => new NavigationViewItem
+                {
+                    Content = pg.NavHeader,
+                    Tag = pg,
+                    IconSource = this.FindResource(pg.IconKey) as IconSource
+
+                }).ToList();
+
+                NavView.MenuItemsSource = menuItems;
+
+                if (menuItems.FirstOrDefault() is Control firstMenuItem)
+                {
+                    FrameView.NavigateFromObject(firstMenuItem.Tag);
+                }
+            });
+        }
+        catch (Exception ex)
+        {
+            var warningDialog = new WarningDialogProduct("Warning","Warning!",$"Exception: {ex.Message}");
+
+            warningDialog.ShowDialog();
+        }
     }
 }

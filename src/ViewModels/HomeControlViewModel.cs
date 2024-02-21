@@ -96,13 +96,6 @@ public class HomeControlViewModel : MainPageViewModelBase
         set => this.RaiseAndSetIfChanged(ref _downloadMessage,value);
     }
 
-    private string _dialogCalled;
-    public string DialogCalled
-    {
-        get => _dialogCalled;
-        set => this.RaiseAndSetIfChanged(ref _dialogCalled,value);
-    }
-
     public ICommand RunScriptCommand { get; }
     public ICommand GetFileCommand { get; }
     public ICommand ClearLogWindowCommand { get; }
@@ -112,7 +105,6 @@ public class HomeControlViewModel : MainPageViewModelBase
     public Interaction<Unit,Unit> SelectAllTextInteraction { get; } = new Interaction<Unit,Unit>();
 
     public readonly DialogWorker dialogWorker = new DialogWorker();
-    public Interaction<IDialogUnit,bool> ShowNotificationDialog { get; }
     private string _notificationMessage;
     public string NotificationMessage
     {
@@ -135,7 +127,6 @@ public class HomeControlViewModel : MainPageViewModelBase
         {
             await SelectAllTextInteraction.Handle(Unit.Default);
         });
-
 
     }
 

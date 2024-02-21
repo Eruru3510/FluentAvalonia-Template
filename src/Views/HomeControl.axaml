@@ -11,8 +11,15 @@
 	d:DesignWidth="1500"
 	mc:Ignorable="d">
 
+	<Design.DataContext>
+		<vm:HomeControlViewModel/>
+	</Design.DataContext>
 
-	<Grid ColumnDefinitions="0,*" RowDefinitions="Auto,Auto,*">
+
+	<Grid 
+		Background="{DynamicResource ThemeControlBackgroundContent}" 
+		ColumnDefinitions="0,*" 
+		RowDefinitions="Auto,Auto,*">
 		<Border
 			Grid.Row="1"
 			Grid.RowSpan="2"
