@@ -6,10 +6,13 @@ using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Threading;
 
+using AvaloniaNav.Services;
 using AvaloniaNav.Services.UnitViewModels;
 using AvaloniaNav.ViewModels;
 
+using FluentAvalonia.Core;
 using FluentAvalonia.UI.Controls;
+using FluentAvalonia.UI.Media.Animation;
 using FluentAvalonia.UI.Navigation;
 using FluentAvalonia.UI.Windowing;
 
@@ -41,6 +44,7 @@ public partial class MainView : UserControl
         var vm = new MainViewViewModel();
         DataContext = vm;
         FrameView.NavigationPageFactory = vm.NavigationPageFactory;
+        NavigationService.Instance.SetFrame(FrameView);
 
         if (e.Root is AppWindow window)
         {
@@ -52,6 +56,20 @@ public partial class MainView : UserControl
         }
 
         FrameView.Navigated += OnFrameViewNavigated;
+        NavView.ItemInvoked += OnNavigationViewItemInvoked;
+    }
+
+    private void OnNavigationViewItemInvoked(object sender,NavigationViewItemInvokedEventArgs e)
+    {
+        
+        if (e.InvokedItemContainer is NavigationViewItem nvi)
+        {
+            NavigationTransitionInfo info;
+
+            info = e.RecommendedNavigationTransitionInfo;
+
+            NavigationService.Instance.NavigateFromContext(nvi.Tag,info);
+        }
     }
 
     protected override void OnLoaded(RoutedEventArgs e)
@@ -60,22 +78,27 @@ public partial class MainView : UserControl
 
         if (VisualRoot is AppWindow aw)
         {
-            TitleBarHost.Height = 50;
+            TitleBarHost.Height = 31;
             TitleBarHost.ColumnDefinitions[3].Width = new GridLength(aw.TitleBar.RightInset,GridUnitType.Pixel);
         }
     }
 
     protected override void OnPointerReleased(PointerReleasedEventArgs e)
     {
-        base.OnPointerReleased(e);
-    }
+        var pt = e.GetCurrentPoint(this);
 
-    public IEnumerable<MainPageViewModelBase> InitializeFrameViewModel()
-    {
-        return new[]
+        // Frame handles X1 -> BackRequested automatically, we can handle X2
+        // here to enable forward navigation
+        if (pt.Properties.PointerUpdateKind == PointerUpdateKind.XButton2Released)
         {
-            new HomeControlViewModel { NavHeader = "Home", IconKey = "HomeIcon" },
-        };
+            if (FrameView.CanGoForward)
+            {
+                FrameView.GoForward();
+                e.Handled = true;
+            }
+        }
+
+        base.OnPointerReleased(e);
     }
 
     public void InitializeNavigationPages()
@@ -83,31 +106,44 @@ public partial class MainView : UserControl
 
         try
         {
-            var mainPages = new[]
+            var mainPages = new MainViewModelBase[]
             {
+                new SettingsControlViewModel { NavHeader = "Setting", IconKey = "SettingsIcon", ShowsInFooter = true },
                 new HomeControlViewModel
                 {
                     NavHeader = "Home",
                     IconKey = "HomeIcon",
                 }
             };
+            var menuItems = new List<NavigationViewItemBase>(4);
+            var footerItems = new List<NavigationViewItemBase>(2);
 
             Dispatcher.UIThread.Post(() =>
             {
-                var menuItems = mainPages.Select(pg => new NavigationViewItem
+                for (int i = 0; i < mainPages.Length; i++)
                 {
-                    Content = pg.NavHeader,
-                    Tag = pg,
-                    IconSource = this.FindResource(pg.IconKey) as IconSource
+                    var pg = mainPages[i];
+                    var nvi = new NavigationViewItem
+                    {
+                        Content = pg.NavHeader,
+                        Tag = pg,
+                        IconSource = this.FindResource(pg.IconKey) as IconSource
+                    };
 
-                }).ToList();
+                    if (pg.ShowsInFooter)
+                        footerItems.Add(nvi);
+                    else
+                        menuItems.Add(nvi);
+
+                }
 
                 NavView.MenuItemsSource = menuItems;
+                NavView.FooterMenuItemsSource = footerItems;
+                
+                NavView.PaneDisplayMode = NavigationViewPaneDisplayMode.LeftMinimal;
+                
 
-                if (menuItems.FirstOrDefault() is Control firstMenuItem)
-                {
-                    FrameView.NavigateFromObject(firstMenuItem.Tag);
-                }
+                FrameView.NavigateFromObject((NavView.MenuItemsSource.ElementAt(0) as Control).Tag);
             });
         }
         catch (Exception ex)

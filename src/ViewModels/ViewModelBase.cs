@@ -25,7 +25,7 @@ public class ViewModelBase : ReactiveObject
     
 }
 
-public class MainPageViewModelBase : ViewModelBase
+public class MainViewModelBase : ViewModelBase
 {
     public string NavHeader { get; set; }
 
