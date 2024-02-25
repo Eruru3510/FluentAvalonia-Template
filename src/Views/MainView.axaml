@@ -6,11 +6,19 @@
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	xmlns:ui="using:FluentAvalonia.UI.Controls"
 	xmlns:vm="using:AvaloniaNav.ViewModels"
-	mc:Ignorable="d" d:DesignWidth="1280" d:DesignHeight="720">
-	<Grid RowDefinitions="Auto,*">
+	d:DesignHeight="720"
+	d:DesignWidth="1280"
+	mc:Ignorable="d">
+
+	<Grid
+		Margin="0,5,0,5"
+		Background="{DynamicResource NormalBlackUpDark}"
+		RowDefinitions="30, *">
 		<Grid
 			Name="TitleBarHost"
-			Background="Transparent"
+			Grid.Row="0"
+			Height="30"
+			Background="{DynamicResource NormalBlackUpDark}"
 			ColumnDefinitions="Auto,Auto,*,Auto">
 			<Image
 				Name="WindowIcon"
@@ -40,35 +48,10 @@
 					</OnPlatform>
 				</TextBlock.IsVisible>
 			</TextBlock>
-
-			<Border Grid.Column="2" Padding="6">
-				<!--<AutoCompleteBox Name="SearchBox"
-                                 MaxWidth="500"
-                                 Watermark="Search"
-                                 Classes="SampleApp"
-                                 ValueMemberBinding="{Binding Header, DataType=vm:MainAppSearchItem}"
-                                 ItemsSource="{Binding SearchTerms}">
-					
-					<AutoCompleteBox.ItemTemplate>
-						<DataTemplate x:DataType="vm:MainAppSearchItem">
-							<Panel>
-								<StackPanel HorizontalAlignment="Left"
-                                            VerticalAlignment="Center">
-									<TextBlock Text="{Binding Header}" />
-									<TextBlock Text="{Binding Namespace}"
-                                               Theme="{StaticResource CaptionTextBlockStyle}"
-                                               Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}"
-                                               FontStyle="Italic"/>
-								</StackPanel>
-							</Panel>
-						</DataTemplate>
-					</AutoCompleteBox.ItemTemplate>
-				</AutoCompleteBox>-->
-			</Border>
 		</Grid>
-
 		<ui:NavigationView
 			Name="NavView"
+			Grid.Row="1"
 			Grid.RowSpan="2"
 			AlwaysShowHeader="False"
 			IsBackEnabled="{Binding #FrameView.CanGoBack}"
@@ -76,10 +59,5 @@
 			PaneDisplayMode="Left">
 			<ui:Frame Name="FrameView" />
 		</ui:NavigationView>
-
-		<Panel Name="OverlayHost"
-               Grid.Row="1">
-			<!--<local:ControlDefinitionOverlay Name="CtrlDefOverlay" />-->
-		</Panel>
 	</Grid>
 </UserControl>
