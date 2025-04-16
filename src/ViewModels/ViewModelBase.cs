@@ -1,35 +1,27 @@
-﻿using System.Windows.Input;
-
-using AvaloniaNav.Services.Units;
-
-using ReactiveUI;
+﻿using ReactiveUI;
 
 namespace AvaloniaNav.ViewModels;
-public class ViewModelBase : ReactiveObject
-{
-    public Interaction<IDialogUnit,bool> ShowNotificationDialog { get; set; }
+public class ViewModelBase : ReactiveObject {
+	//public Interaction<IDialogUnit, bool> ShowNotificationDialog { get; set; }
 
-    private string _dialogCalled;
-    public string DialogCalled
-    {
-        get => _dialogCalled;
-        set => this.RaiseAndSetIfChanged(ref _dialogCalled,value);
-    }
+	private string _dialogCalled;
+	public string DialogCalled {
+		get => _dialogCalled;
+		set => this.RaiseAndSetIfChanged (ref _dialogCalled, value);
+	}
 
-    private string _notificationMessage;
-    public string NotificationMessage
-    {
-        get => _notificationMessage;
-        set => this.RaiseAndSetIfChanged(ref _notificationMessage,value);
-    }
-    
+	private string _notificationMessage;
+	public string NotificationMessage {
+		get => _notificationMessage;
+		set => this.RaiseAndSetIfChanged (ref _notificationMessage, value);
+	}
+
 }
 
-public class MainViewModelBase : ViewModelBase
-{
-    public string NavHeader { get; set; }
+public class MainViewModelBase : ViewModelBase {
+	public string NavHeader { get; set; }
 
-    public string IconKey { get; set; }
+	public string IconKey { get; set; }
 
-    public bool ShowsInFooter { get; set; }
+	public bool ShowsInFooter { get; set; }
 }

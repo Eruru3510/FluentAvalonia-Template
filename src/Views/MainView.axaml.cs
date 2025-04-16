@@ -1,156 +1,123 @@
-
+﻿
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using Avalonia;
 using Avalonia.Controls;
-
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Threading;
-
 using AvaloniaNav.Services;
-using AvaloniaNav.Services.UnitViewModels;
 using AvaloniaNav.ViewModels;
-
 using FluentAvalonia.Core;
 using FluentAvalonia.UI.Controls;
 using FluentAvalonia.UI.Media.Animation;
 using FluentAvalonia.UI.Navigation;
 using FluentAvalonia.UI.Windowing;
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-
 namespace AvaloniaNav;
 
-public partial class MainView : UserControl
-{
-    public MainView()
-    {
-        InitializeComponent();
-    }
+public partial class MainView : UserControl {
+	public MainView () {
+		InitializeComponent ();
+	}
 
-    private void OnFrameViewNavigated(object sender,NavigationEventArgs e)
-    {
-        var page = e.Content as Control;
-        var dataContext = page?.DataContext;
+	private void OnFrameViewNavigated (object sender, NavigationEventArgs e) {
+		var page = e.Content as Control;
+		var dataContext = page?.DataContext;
 
 
-    }
+	}
 
-    protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
-    {
-        base.OnAttachedToVisualTree(e);
+	protected override void OnAttachedToVisualTree (VisualTreeAttachmentEventArgs e) {
+		base.OnAttachedToVisualTree (e);
 
-        var vm = new MainViewViewModel();
-        DataContext = vm;
-        FrameView.NavigationPageFactory = vm.NavigationPageFactory;
-        NavigationService.Instance.SetFrame(FrameView);
+		var vm = new MainViewViewModel ();
+		DataContext = vm;
+		FrameView.NavigationPageFactory = vm.NavigationPageFactory;
+		NavigationService.Instance.SetFrame (FrameView);
 
-        if (e.Root is AppWindow window)
-        {
-            InitializeNavigationPages();
-        }
-        else
-        {
-            InitializeNavigationPages();
-        }
+		if (e.Root is AppWindow window) {
+			InitializeNavigationPages ();
+		} else {
+			InitializeNavigationPages ();
+		}
 
-        FrameView.Navigated += OnFrameViewNavigated;
-        NavView.ItemInvoked += OnNavigationViewItemInvoked;
-    }
+		FrameView.Navigated += OnFrameViewNavigated;
+		NavView.ItemInvoked += OnNavigationViewItemInvoked;
+	}
 
-    private void OnNavigationViewItemInvoked(object sender,NavigationViewItemInvokedEventArgs e)
-    {
-        
-        if (e.InvokedItemContainer is NavigationViewItem nvi)
-        {
-            NavigationTransitionInfo info;
+	private void OnNavigationViewItemInvoked (object sender, NavigationViewItemInvokedEventArgs e) {
 
-            info = e.RecommendedNavigationTransitionInfo;
+		if (e.InvokedItemContainer is NavigationViewItem nvi) {
+			NavigationTransitionInfo info;
 
-            NavigationService.Instance.NavigateFromContext(nvi.Tag,info);
-        }
-    }
+			info = e.RecommendedNavigationTransitionInfo;
 
-    protected override void OnLoaded(RoutedEventArgs e)
-    {
-        base.OnLoaded(e);
+			NavigationService.Instance.NavigateFromContext (nvi.Tag, info);
+		}
+	}
 
-        if (VisualRoot is AppWindow aw)
-        {
-            TitleBarHost.Height = 31;
-            TitleBarHost.ColumnDefinitions[3].Width = new GridLength(aw.TitleBar.RightInset,GridUnitType.Pixel);
-        }
-    }
+	protected override void OnLoaded (RoutedEventArgs e) {
+		base.OnLoaded (e);
 
-    protected override void OnPointerReleased(PointerReleasedEventArgs e)
-    {
-        var pt = e.GetCurrentPoint(this);
+		if (VisualRoot is AppWindow aw) {
+			TitleBarHost.Height = 31;
+			TitleBarHost.ColumnDefinitions[3].Width = new GridLength (aw.TitleBar.RightInset, GridUnitType.Pixel);
+		}
+	}
 
-        // Frame handles X1 -> BackRequested automatically, we can handle X2
-        // here to enable forward navigation
-        if (pt.Properties.PointerUpdateKind == PointerUpdateKind.XButton2Released)
-        {
-            if (FrameView.CanGoForward)
-            {
-                FrameView.GoForward();
-                e.Handled = true;
-            }
-        }
+	protected override void OnPointerReleased (PointerReleasedEventArgs e) {
+		var pt = e.GetCurrentPoint (this);
 
-        base.OnPointerReleased(e);
-    }
+		// Frame handles X1 -> BackRequested automatically, we can handle X2
+		// here to enable forward navigation
+		if (pt.Properties.PointerUpdateKind == PointerUpdateKind.XButton2Released) {
+			if (FrameView.CanGoForward) {
+				FrameView.GoForward ();
+				e.Handled = true;
+			}
+		}
 
-    public void InitializeNavigationPages()
-    {
+		base.OnPointerReleased (e);
+	}
 
-        try
-        {
-            var mainPages = new MainViewModelBase[]
-            {
-                new SettingsControlViewModel { NavHeader = "Setting", IconKey = "SettingsIcon", ShowsInFooter = true },
-                new HomeControlViewModel
-                {
-                    NavHeader = "Home",
-                    IconKey = "HomeIcon",
-                }
-            };
-            var menuItems = new List<NavigationViewItemBase>(4);
-            var footerItems = new List<NavigationViewItemBase>(2);
+	public void InitializeNavigationPages () {
+		var mainPages = new MainViewModelBase[]
+		{
+			new SettingsControlViewModel { NavHeader = "Setting", IconKey = "SettingsIcon", ShowsInFooter = true },
+			new HomeControlViewModel
+			{
+				NavHeader = "Home",
+				IconKey = "HomeIcon",
+			}
+		};
+		var menuItems = new List<NavigationViewItemBase> (4);
+		var footerItems = new List<NavigationViewItemBase> (2);
 
-            Dispatcher.UIThread.Post(() =>
-            {
-                for (int i = 0; i < mainPages.Length; i++)
-                {
-                    var pg = mainPages[i];
-                    var nvi = new NavigationViewItem
-                    {
-                        Content = pg.NavHeader,
-                        Tag = pg,
-                        IconSource = this.FindResource(pg.IconKey) as IconSource
-                    };
+		Dispatcher.UIThread.Post (() => {
+			for (int i = 0; i < mainPages.Length; i++) {
+				var pg = mainPages[i];
+				var nvi = new NavigationViewItem {
+					Content = pg.NavHeader,
+					Tag = pg,
+					IconSource = this.FindResource (pg.IconKey) as IconSource
+				};
 
-                    if (pg.ShowsInFooter)
-                        footerItems.Add(nvi);
-                    else
-                        menuItems.Add(nvi);
+				if (pg.ShowsInFooter)
+					footerItems.Add (nvi);
+				else
+					menuItems.Add (nvi);
 
-                }
+			}
 
-                NavView.MenuItemsSource = menuItems;
-                NavView.FooterMenuItemsSource = footerItems;
-                
-                NavView.PaneDisplayMode = NavigationViewPaneDisplayMode.LeftMinimal;
-                
+			NavView.MenuItemsSource = menuItems;
+			NavView.FooterMenuItemsSource = footerItems;
 
-                FrameView.NavigateFromObject((NavView.MenuItemsSource.ElementAt(0) as Control).Tag);
-            });
-        }
-        catch (Exception ex)
-        {
-            var warningDialog = new WarningDialogProduct("Warning","Warning!",$"Exception: {ex.Message}");
+			NavView.PaneDisplayMode = NavigationViewPaneDisplayMode.LeftMinimal;
 
-            warningDialog.ShowDialog();
-        }
-    }
+
+			FrameView.NavigateFromObject ((NavView.MenuItemsSource.ElementAt (0) as Control).Tag);
+		});
+	}
 }

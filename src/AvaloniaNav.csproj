@@ -9,9 +9,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Models\" />
     <AvaloniaResource Include="Assets\**" />
-	 
+	  
   </ItemGroup>
 
   <ItemGroup>
@@ -34,10 +33,5 @@
 	  <PackageReference Include="DialogHost.Avalonia" Version="0.7.7" />
 	  <PackageReference Include="FluentAvaloniaUI" Version="2.0.5" />
 	  <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.8.0" />
-  </ItemGroup>
-
-
-  <ItemGroup>
-    <ProjectReference Include="..\AvaloniaNav.Services\AvaloniaNav.Services.csproj" />
   </ItemGroup>
 </Project>
